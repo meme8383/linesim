@@ -1,4 +1,5 @@
 # LineSim
+![](https://img.shields.io/github/actions/workflow/status/meme8383/linesim/pylint.yml)
 
 Line simulation made with pygame for testing a robot's pathfinding abilities.
 

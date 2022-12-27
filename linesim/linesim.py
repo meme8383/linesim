@@ -13,7 +13,7 @@ class LineSimulation:
     Simulates a robot track
     """
 
-    def __init__(self, start: tuple,
+    def __init__(self, start: tuple = (50, 450),
                  background=os.path.join(os.path.dirname(
                      os.path.abspath(__file__)), "assets/background.png")):
         """Initialize Game"""
@@ -21,7 +21,9 @@ class LineSimulation:
 
         # Load background
         self.background = pygame.image.load(
-            background or os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets/background.png"))
+            background or os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                "assets/background.png"))
         self.size = self.background.get_size()
 
         # Initialize Window
@@ -33,35 +35,34 @@ class LineSimulation:
         self.robot = Robot(start)
 
     def add_sensor(self, offset):
+        """Add a sensor to the robot"""
         sensor = Sensor(self, self.robot, offset)
         self.robot.sensors.append(sensor)
         return sensor
 
     def update(self, check_bounds=True):
         """Update simulation while checking for events"""
-        # Check for quit
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.quit()
-                return None
-
-        # Quit game if robot leaves window
-        if check_bounds and (
-                (any(i - 30 < 0 for i in self.robot.position) or
-                 any(map(lambda x, y: x + 30 > y, self.robot.position,
-                         self.size)))):
-            self.quit()
-            return None
+        self.clock.tick(30)  # Max 30fps
+        self.render()
 
         # Quit game if robot touches red
         color = self.background.get_at(
             tuple(int(i) for i in self.robot.position))
         if color[0] > 230 and all(i < 50 for i in color[1:3]):
             self.quit()
-            return None
 
-        self.render()
-        self.clock.tick(30)  # Max 30fps
+        # Quit game if robot leaves window
+        elif check_bounds and (
+                (any(i - 30 < 0 for i in self.robot.position) or
+                 any(map(lambda x, y: x + 30 > y, self.robot.position,
+                         self.size)))):
+            self.quit()
+
+        else:
+            # Check for exit
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.quit()
 
     def render(self):
         """Render background and all objects"""
@@ -90,7 +91,8 @@ class Robot:
     def __init__(self, start: tuple):
         """Initialize Robot"""
         self.image = pygame.image.load(
-            os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets/robot.png"))
+            os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                         "assets/robot.png"))
 
         # Initialize position
         self.position = list(start)

@@ -2,7 +2,7 @@
 
 from linesim import LineSimulation
 
-sim = LineSimulation((50, 450))
+sim = LineSimulation()
 robot = sim.robot
 sensors = [
     sim.add_sensor((20, 10)),

@@ -13,7 +13,7 @@ First, import the `LineSimulation` class.
 ```py
 from linesim import LineSimulation
 ```
-Initialize the simulation with `(50, 450)` as the start position for the default track. Then run `sim.add_sensor(offset)` for each sensor to initialize, with positive x values as horizontal offset and positive y vales as vertical offset from the center of the robot.
+Initialize the simulation and run `sim.add_sensor(offset)` for each sensor to initialize, with positive x values as horizontal offset and positive y vales as vertical offset from the center of the robot.
 
 Note: pygame defines the positive y direction as downwards.
 ```py

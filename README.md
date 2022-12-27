@@ -4,6 +4,8 @@ Line simulation made with pygame for testing a robot's pathfinding abilities.
 
 Intended for testing pathfinding code for Purdue's ENGR 161 Project 3.
 
+![Test track](linesim/assets/background.png)
+
 ## Features
 - Multiple line sensor support
 - Default track with curves, broken lines, and multiple paths.

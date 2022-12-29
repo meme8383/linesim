@@ -1,1 +1,1 @@
-from linesim.linesim import LineSimulation
+from .linesim import *

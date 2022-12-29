@@ -12,10 +12,10 @@ sensors = [
 
 while sim.running:
     if sensors[0].read_line():
-        robot.rotate(4)
+        robot.rotate(4)  # Turn right
     elif sensors[1].read_line():
-        robot.rotate(-4)
+        robot.rotate(-4)  # Turn left
     else:
-        robot.move(4)
+        robot.move(4)  # Go straight
 
     sim.update()

@@ -5,7 +5,7 @@ Line simulation made with pygame for testing a robot's pathfinding abilities.
 
 Intended for testing pathfinding code for Purdue's ENGR 161 Project 3.
 
-![Test track](linesim/assets/background.png)
+![Test track](https://raw.githubusercontent.com/meme8383/linesim/main/linesim/assets/background.png)
 
 ## Features
 - Multiple line sensor support
@@ -13,6 +13,7 @@ Intended for testing pathfinding code for Purdue's ENGR 161 Project 3.
 
 ## Usage
 First, import the `LineSimulation` class.
+
 ```py
 from linesim import LineSimulation
 ```
@@ -20,7 +21,7 @@ Initialize the simulation and run `sim.add_sensor(offset)` for each sensor to in
 
 Note: pygame defines the positive y direction as downwards.
 ```py
-sim = LineSimulation((50, 450))
+sim = LineSimulation()
 robot = sim.robot
 sensors = [
     sim.add_sensor((20, 10)),

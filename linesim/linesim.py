@@ -1,6 +1,6 @@
 """
 Simulates a track of black lines on a white
-background along with a robot.
+background along with a robot with sensors.
 """
 
 import math

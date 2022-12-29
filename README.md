@@ -23,7 +23,6 @@ Linesim is available on [PyPI](https://pypi.org/project/linesim/).
 pip install linesim
 ```
 
-Note: If you are having difficulty installing pygame 2.1.2 and you are using Python 3.11, first run `pip install pygame==2.1.3-dev8` before installing.
 ## Usage
 First, import the `LineSimulation` class.
 

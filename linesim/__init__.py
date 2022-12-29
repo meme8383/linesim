@@ -1,5 +1,5 @@
 """
-Line simulation made with pygame for testing 
+Line simulation made with pygame for testing
 a robot's pathfinding abilities.
 """
 

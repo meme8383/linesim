@@ -1,5 +1,9 @@
 # Linesim
-![](https://img.shields.io/github/actions/workflow/status/meme8383/linesim/pylint.yml)
+[![Build status](https://img.shields.io/github/actions/workflow/status/meme8383/linesim/pylint.yml?style=for-the-badge)](https://github.com/meme8383/linesim/actions/workflows/pylint.yml)
+[![PyPI version](https://img.shields.io/pypi/v/linesim?style=for-the-badge)](https://pypi.org/project/linesim/)
+[![License](https://img.shields.io/github/license/meme8383/linesim?style=for-the-badge)](https://opensource.org/licenses/MIT)
+[![Python versions](https://img.shields.io/pypi/pyversions/linesim?style=for-the-badge)](https://pypi.org/project/linesim/)
+[![Wheel](https://img.shields.io/pypi/wheel/linesim?style=for-the-badge)](https://pypi.org/project/linesim/)
 
 Line simulation made with pygame for testing a robot's pathfinding abilities.
 
@@ -13,7 +17,7 @@ Intended for testing pathfinding code for Purdue's ENGR 161 Project 3.
 
 ## Installation
 
-Linesim is available on PyPI.
+Linesim is available on [PyPI](https://pypi.org/project/linesim/).
 
 ```
 pip install linesim

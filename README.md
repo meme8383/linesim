@@ -1,4 +1,4 @@
-# LineSim
+# Linesim
 ![](https://img.shields.io/github/actions/workflow/status/meme8383/linesim/pylint.yml)
 
 Line simulation made with pygame for testing a robot's pathfinding abilities.
@@ -11,6 +11,15 @@ Intended for testing pathfinding code for Purdue's ENGR 161 Project 3.
 - Multiple line sensor support
 - Default track with curves, broken lines, and multiple paths.
 
+## Installation
+
+Linesim is available on PyPI.
+
+```
+pip install linesim
+```
+
+Note: If you are having difficulty installing pygame 2.1.2 and you are using Python 3.11, first run `pip install pygame==2.1.3-dev8` before installing.
 ## Usage
 First, import the `LineSimulation` class.
 

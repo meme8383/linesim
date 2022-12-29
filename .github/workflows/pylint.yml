@@ -20,4 +20,4 @@ jobs:
         pip install pylint
     - name: Analysing the code with pylint
       run: |
-        pylint --unsafe-load-any-extension=y $(git ls-files '*.py')
+        pylint --extension-pkg-whitelist=pygame $(git ls-files '*.py')

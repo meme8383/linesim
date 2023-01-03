@@ -1,8 +1,6 @@
 Usage
 =====
 
-.. module:: linesim
-
 Installation
 ------------
 

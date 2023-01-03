@@ -25,4 +25,4 @@ pip install linesim
 
 ## Usage
 
-Read the [documentation](https://linesim.readthedocs.io/en/latest/) or follow the [Quick Start Guide](https://linesim.readthedocs.io/en/latest/) for more information.
+Read the [documentation](https://linesim.readthedocs.io/en/latest/) or follow the [Quick Start Guide](https://linesim.readthedocs.io/en/latest/usage.html#quick-start) for more information.

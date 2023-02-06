@@ -8,7 +8,8 @@
 Line simulation made with pygame for testing robot pathfinding algorithms.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/meme8383/linesim/main/docs/assets/demo.png" width=400>
+  <img src="https://raw.githubusercontent.com/meme8383/linesim/main/docs/assets/demo.png" height=400>
+  <img src="https://raw.githubusercontent.com/meme8383/linesim/main/docs/assets/maze-demo.png" height=400>
 </p>
 
 ## Features

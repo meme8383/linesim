@@ -7,10 +7,8 @@
 
 Line simulation made with pygame for testing a robot's pathfinding abilities.
 
-Created for testing pathfinding code for Purdue University's ENGR 161 Project 3.
-
 <p align="center">
-  <img src="https://raw.githubusercontent.com/meme8383/linesim/main/assets/demo.png" width=400>
+  <img src="https://raw.githubusercontent.com/meme8383/linesim/main/docs/assets/demo.png" width=400>
 </p>
 
 ## Features

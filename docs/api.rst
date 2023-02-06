@@ -11,3 +11,9 @@ API Reference
 
 .. autoclass:: Sensor
     :members:
+
+.. autoclass:: Line
+    :members:
+
+.. autoclass:: Ultrasonic
+    :members:

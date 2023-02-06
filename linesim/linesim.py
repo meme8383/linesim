@@ -1,10 +1,12 @@
 """
-Simulates a track of black lines on a white
-background along with a robot with sensors.
+Simulates a 2D robot test track for testing robot
+sensing/pathfinding algorithms.
 """
 
 import math
 import os
+from functools import total_ordering
+
 import pygame
 
 
@@ -15,18 +17,29 @@ class LineSimulation:
         defaults to ``(50, 450)``.
     :type start: tuple, optional
     :param background: The path to the background image,
-        defaults to ``"assets/background.png"``.
+        defaults to ``"assets/blank.png"``.
     :type background: str, optional
     """
 
-    def __init__(self, start: tuple = (50, 450),
-                 background=os.path.join(os.path.dirname(
-                     os.path.abspath(__file__)), "assets/background.png")):
+    def __init__(self, start: tuple = (30, 30), background="blank",
+                 custom_background=None):
         """Initialize pygame and robot object"""
         self.running = True
 
+        self.overlays = False
+
+        starts = {"lines": (50, 450),
+                  "maze": (30, 280),
+                  "blank": (250, 250)}
+
         # Load background
-        self.background = pygame.image.load(background)
+        if custom_background:
+            self.background = pygame.image.load(custom_background)
+        else:
+            start = starts[background]
+            self.background = pygame.image.load(os.path.join(os.path.dirname(
+                os.path.abspath(__file__)),
+                f"assets/{background}.png"))
         self.size = self.background.get_size()
 
         # Initialize Window
@@ -37,15 +50,25 @@ class LineSimulation:
 
         self.robot = Robot(start)
 
-    def add_sensor(self, offset):
+    def add_sensor(self, offset, sensor, angle=None):
         """Add a sensor to the robot
 
         :param offset: The sensor offset from the robot's center.
         :type offset: tuple
+        :param sensor: The type of sensor
+        :type sensor: str
+        :param angle: The angle of an ultrasonic sensor
+        :type angle: int
         :return: The sensor object.
-        :rtype: Sensor
         """
-        sensor = Sensor(self, self.robot, offset)
+        if sensor.lower() == "line":
+            sensor = Line(self, self.robot, offset)
+        elif sensor.lower() == "ultrasonic":
+            if angle is None:
+                raise ValueError("Angle is a required parameter")
+            sensor = Ultrasonic(self, self.robot, offset, angle)
+        else:
+            raise ValueError(f"No such sensor type: {sensor}")
         self.robot.sensors.append(sensor)
         return sensor
 
@@ -88,6 +111,7 @@ class LineSimulation:
         """Render background and all objects"""
         self.display.blit(self.background, (0, 0))
 
+        # Render sensors
         to_render = [self.robot] + self.robot.sensors
         for item in to_render:
             surface = item.surface
@@ -96,6 +120,11 @@ class LineSimulation:
                 surface,
                 (position[0] - surface.get_width() / 2,
                  position[1] - surface.get_height() / 2))
+
+            if self.overlays and isinstance(item, Ultrasonic):
+                overlay = item.line
+                if overlay is not None:
+                    self.display.blit(overlay, (0, 0))
 
         pygame.display.update()
 
@@ -154,7 +183,7 @@ class Robot:
 
 
 class Sensor:
-    """Robot line sensor
+    """Base sensor class
 
     :param sim: The robot simulation.
     :type sim: LineSimulation
@@ -166,26 +195,10 @@ class Sensor:
 
     def __init__(self, sim: LineSimulation, robot: Robot,
                  offset: tuple):
-        """Constructor method"""
+        """Initialize position"""
         self.offset = offset
         self.robot = robot
         self.sim = sim
-
-    def read_line(self, threshold=50):
-        """Read line under sensor
-
-        Return True if the average RGB value under sensor
-        is under the threshold (black line).
-
-        :param threshold: The required average RGB value,
-            defaults to ``50``.
-        :type threshold: int, optional
-        """
-        try:
-            value = self.sim.background.get_at(self.position)
-            return sum(value[:3]) < (threshold * 3)
-        except IndexError:
-            return False
 
     @property
     def position(self) -> tuple:
@@ -203,12 +216,133 @@ class Sensor:
 
     @property
     def surface(self) -> pygame.Surface:
+        """Default sensor surface
+
+        :return: Colored square representing the sensor.
+        :rtype: pygame.Surface
+        """
+        image = pygame.Surface((5, 5))
+        image.fill(pygame.Color("#000000"))
+        return image
+
+
+class Line(Sensor):
+    """Robot Line Sensor
+
+    :param sim: The robot simulation.
+    :type sim: LineSimulation
+    :param robot: The robot that the sensor is attached to.
+    :type robot: Robot
+    :param offset: The sensor's offset from the robot center.
+    :type offset: tuple
+    """
+
+    def __init__(self, sim: LineSimulation, robot: Robot,
+                 offset: tuple):
+        """Initialize position and threshold"""
+        super().__init__(sim, robot, offset)
+        self.threshold = 50
+
+    def __bool__(self):
+        """Read line under sensor
+
+        Return True if the average RGB value under sensor
+        is under the threshold (black line).
+        """
+        try:
+            value = self.sim.background.get_at(self.position)
+            return sum(value[:3]) < (self.threshold * 3)
+        except IndexError:
+            return False
+
+    @property
+    def surface(self) -> pygame.Surface:
         """Create sensor surface
 
         :return: Colored square representing the sensor.
         :rtype: pygame.Surface
         """
         image = pygame.Surface((5, 5))
-        color = "#00ff00" if self.read_line() else "#ff0000"
+        color = "#00ff00" if self else "#ff0000"
         image.fill(pygame.Color(color))
+        return image
+
+
+@total_ordering
+class Ultrasonic(Sensor):
+    """Robot Ultrasonic Sensor"""
+
+    def __init__(self, sim: LineSimulation, robot: Robot,
+                 offset: tuple, angle: int):
+        super().__init__(sim, robot, offset)
+        self.angle = angle
+        self.overlay = pygame.Surface(self.sim.size)
+        self.max_range = 100
+        self.overlay = None
+
+    def get_distance(self):
+        """Get distance of wall from sensor
+
+        :return: Distance from wall
+        :rtype: int
+        """
+        self.overlay = pygame.Surface(self.sim.size, pygame.SRCALPHA, 32)
+        self.overlay.convert_alpha()
+        for dist in range(self.max_range):
+            location = [
+                self.position[0] + dist * math.cos(
+                    math.radians(self.angle + self.robot.angle)),
+                self.position[1] + dist * math.sin(
+                    math.radians(self.angle + self.robot.angle))
+            ]
+            location = [int(i) for i in location]
+
+            try:
+                value = self.sim.background.get_at(location)
+                self.overlay.set_at(location, "#0000ff")
+            except IndexError:
+                pygame.draw.circle(self.overlay, "#ff0000", location, 3)
+                return dist
+
+            if value[2] > 220 and all(i < 50 for i in value[:2]):
+                pygame.draw.circle(self.overlay, "#ff0000", location, 3)
+                return dist
+        return self.max_range
+
+    @property
+    def line(self):
+        """Ultrasonic visibility overlay"""
+        overlay = self.overlay
+        self.overlay = None
+        return overlay
+
+    def __int__(self):
+        return self.get_distance()
+
+    def __eq__(self, other):
+        if isinstance(other, Ultrasonic):
+            return self.get_distance() == other.get_distance()
+        return self.get_distance() == other
+
+    def __lt__(self, other):
+        if isinstance(other, Ultrasonic):
+            return self.get_distance() < other.get_distance()
+        return self.get_distance() < other
+
+    @property
+    def surface(self) -> pygame.Surface:
+        """Create sensor surface
+
+        :return: Colored square representing the sensor.
+        :rtype: pygame.Surface
+        """
+        image = pygame.Surface((10, 10), pygame.SRCALPHA, 32)
+        image.convert_alpha()
+        angles = [0, 135, 225]
+        angles = [self.robot.angle + self.angle + i for i in angles]
+        positions = tuple((5 * math.cos(math.radians(i)) + 5,
+                           5 * math.sin(math.radians(i)) + 5)
+                          for i in angles)
+
+        pygame.draw.polygon(image, "#0000ff", positions)
         return image

@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.abspath('..'))  # Include linesim in sys path
 project = 'linesim'
 copyright = '2023, Eduard Tanase'
 author = 'Eduard Tanase'
-release = '0.1.4'
+release = '0.2.0'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

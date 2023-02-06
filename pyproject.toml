@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "linesim"
-version = "0.1.4"
+version = "0.2.0"
 authors = [
   { name="Eduard Tanase", email="eduard.tanase1@gmail.com" },
 ]

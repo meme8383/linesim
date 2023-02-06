@@ -5,15 +5,16 @@
 [![Python versions](https://img.shields.io/pypi/pyversions/linesim?style=for-the-badge)](https://pypi.org/project/linesim/)
 [![Wheel](https://img.shields.io/pypi/wheel/linesim?style=for-the-badge)](https://pypi.org/project/linesim/)
 
-Line simulation made with pygame for testing a robot's pathfinding abilities.
+Line simulation made with pygame for testing robot pathfinding algorithms.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/meme8383/linesim/main/docs/assets/demo.png" width=400>
 </p>
 
 ## Features
-- Multiple line sensor support
-- Default track with curves, broken lines, and multiple paths.
+- Configurable line sensors (color sensors) and ultrasonic sensors.
+- Default tracks with different types of lines and a maze.
+- Custom track support
 
 ## Installation
 

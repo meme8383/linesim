@@ -16,9 +16,11 @@ class LineSimulation:
     :param start: The start position of the robot,
         defaults to ``(50, 450)``.
     :type start: tuple, optional
-    :param background: The path to the background image,
-        defaults to ``"assets/blank.png"``.
+    :param background: The included background to use,
+        defaults to ``"blank"``
     :type background: str, optional
+    :param custom_background: The path to a custom background image.
+    :type custom_background: str, optional
     """
 
     def __init__(self, start: tuple = (30, 30), background="blank",
@@ -243,17 +245,21 @@ class Line(Sensor):
         super().__init__(sim, robot, offset)
         self.threshold = 50
 
-    def __bool__(self):
+    def read_line(self):
         """Read line under sensor
 
         Return True if the average RGB value under sensor
-        is under the threshold (black line).
+        is under the threshold (black line). Also returned by
+        ``__bool__``.
         """
         try:
             value = self.sim.background.get_at(self.position)
             return sum(value[:3]) < (self.threshold * 3)
         except IndexError:
             return False
+
+    def __bool__(self):
+        return self.read_line()
 
     @property
     def surface(self) -> pygame.Surface:
@@ -283,7 +289,7 @@ class Ultrasonic(Sensor):
     def get_distance(self):
         """Get distance of wall from sensor
 
-        :return: Distance from wall
+        :return: Distance from wall.
         :rtype: int
         """
         self.overlay = pygame.Surface(self.sim.size, pygame.SRCALPHA, 32)
@@ -311,7 +317,10 @@ class Ultrasonic(Sensor):
 
     @property
     def line(self):
-        """Ultrasonic visibility overlay"""
+        """Ultrasonic visibility overlay
+
+        Only shown when a sensor value is retrieved.
+        """
         overlay = self.overlay
         self.overlay = None
         return overlay

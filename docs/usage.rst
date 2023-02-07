@@ -19,7 +19,7 @@ First, import the ``LineSimulation`` class.
     from linesim import LineSimulation
 
 Initialize the simulation by creating a ``LineSimulation`` object. Specify
-the track to be used as ``background``
+the track to be used as ``background``.
 
 .. code-block:: python
 

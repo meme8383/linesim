@@ -320,6 +320,8 @@ class Ultrasonic(Sensor):
         """Ultrasonic visibility overlay
 
         Only shown when a sensor value is retrieved.
+        :return: Line to end of sensor path
+        :rtype: pygame.Surface
         """
         overlay = self.overlay
         self.overlay = None
@@ -342,7 +344,7 @@ class Ultrasonic(Sensor):
     def surface(self) -> pygame.Surface:
         """Create sensor surface
 
-        :return: Colored square representing the sensor.
+        :return: Colored triangle representing the sensor.
         :rtype: pygame.Surface
         """
         image = pygame.Surface((10, 10), pygame.SRCALPHA, 32)

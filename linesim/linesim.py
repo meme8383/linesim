@@ -23,25 +23,28 @@ class LineSimulation:
     :type custom_background: str, optional
     """
 
-    def __init__(self, start: tuple = (30, 30), background="blank",
-                 custom_background=None):
+    def __init__(
+            self, start: tuple = (30, 30), background="blank",
+            custom_background=None
+    ):
         """Initialize pygame and robot object"""
         self.running = True
 
         self.overlays = False
 
-        starts = {"lines": (50, 450),
-                  "maze": (30, 280),
-                  "blank": (250, 250)}
+        starts = {"lines": (50, 450), "maze": (30, 280), "blank": (250, 250)}
 
         # Load background
         if custom_background:
             self.background = pygame.image.load(custom_background)
         else:
             start = starts[background]
-            self.background = pygame.image.load(os.path.join(os.path.dirname(
-                os.path.abspath(__file__)),
-                f"assets/{background}.png"))
+            self.background = pygame.image.load(
+                os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    f"assets/{background}.png",
+                )
+            )
         self.size = self.background.get_size()
 
         # Initialize Window
@@ -98,9 +101,13 @@ class LineSimulation:
 
         # Quit game if robot leaves window
         elif check_bounds and (
-                (any(i - 30 < 0 for i in self.robot.position) or
-                 any(map(lambda x, y: x + 30 > y, self.robot.position,
-                         self.size)))):
+                (
+                        any(i - 30 < 0 for i in self.robot.position)
+                        or any(
+                    map(lambda x, y: x + 30 > y, self.robot.position,
+                        self.size))
+                )
+        ):
             self.quit()
 
         else:
@@ -120,8 +127,11 @@ class LineSimulation:
             position = item.position
             self.display.blit(
                 surface,
-                (position[0] - surface.get_width() / 2,
-                 position[1] - surface.get_height() / 2))
+                (
+                    position[0] - surface.get_width() / 2,
+                    position[1] - surface.get_height() / 2,
+                ),
+            )
 
             if self.overlays and isinstance(item, Ultrasonic):
                 overlay = item.line
@@ -149,7 +159,8 @@ class Robot:
         """Constructor method"""
         self.image = pygame.image.load(
             os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                         "assets/robot.png"))
+                         "assets/robot.png")
+        )
 
         # Initialize position
         self.position = list(start)
@@ -195,8 +206,7 @@ class Sensor:
     :type offset: tuple
     """
 
-    def __init__(self, sim: LineSimulation, robot: Robot,
-                 offset: tuple):
+    def __init__(self, sim: LineSimulation, robot: Robot, offset: tuple):
         """Initialize position"""
         self.offset = offset
         self.robot = robot
@@ -209,12 +219,18 @@ class Sensor:
         :return: The (x, y) position of the sensor.
         :rtype: tuple
         """
-        return (int(self.robot.position[0] +
-                    self.offset[0] * math.cos(math.radians(self.robot.angle)) -
-                    self.offset[1] * math.sin(math.radians(self.robot.angle))),
-                int(self.robot.position[1] +
-                    self.offset[1] * math.cos(math.radians(self.robot.angle)) +
-                    self.offset[0] * math.sin(math.radians(self.robot.angle))))
+        return (
+            int(
+                self.robot.position[0]
+                + self.offset[0] * math.cos(math.radians(self.robot.angle))
+                - self.offset[1] * math.sin(math.radians(self.robot.angle))
+            ),
+            int(
+                self.robot.position[1]
+                + self.offset[1] * math.cos(math.radians(self.robot.angle))
+                + self.offset[0] * math.sin(math.radians(self.robot.angle))
+            ),
+        )
 
     @property
     def surface(self) -> pygame.Surface:
@@ -239,8 +255,7 @@ class Line(Sensor):
     :type offset: tuple
     """
 
-    def __init__(self, sim: LineSimulation, robot: Robot,
-                 offset: tuple):
+    def __init__(self, sim: LineSimulation, robot: Robot, offset: tuple):
         """Initialize position and threshold"""
         super().__init__(sim, robot, offset)
         self.threshold = 50
@@ -278,8 +293,8 @@ class Line(Sensor):
 class Ultrasonic(Sensor):
     """Robot Ultrasonic Sensor"""
 
-    def __init__(self, sim: LineSimulation, robot: Robot,
-                 offset: tuple, angle: int):
+    def __init__(self, sim: LineSimulation, robot: Robot, offset: tuple,
+                 angle: int):
         super().__init__(sim, robot, offset)
         self.angle = angle
         self.overlay = pygame.Surface(self.sim.size)
@@ -296,10 +311,10 @@ class Ultrasonic(Sensor):
         self.overlay.convert_alpha()
         for dist in range(self.max_range):
             location = [
-                self.position[0] + dist * math.cos(
-                    math.radians(self.angle + self.robot.angle)),
-                self.position[1] + dist * math.sin(
-                    math.radians(self.angle + self.robot.angle))
+                self.position[0]
+                + dist * math.cos(math.radians(self.angle + self.robot.angle)),
+                self.position[1]
+                + dist * math.sin(math.radians(self.angle + self.robot.angle)),
             ]
             location = [int(i) for i in location]
 
@@ -344,16 +359,20 @@ class Ultrasonic(Sensor):
     def surface(self) -> pygame.Surface:
         """Create sensor surface
 
+        Draw a triangle inscribed in a circle that rotates
+        with the robot and sensor angle.
         :return: Colored triangle representing the sensor.
         :rtype: pygame.Surface
         """
         image = pygame.Surface((10, 10), pygame.SRCALPHA, 32)
-        image.convert_alpha()
-        angles = [0, 135, 225]
+        image.convert_alpha()  # Transparency
+        angles = [0, 135, 225]  # Isosceles triangle
         angles = [self.robot.angle + self.angle + i for i in angles]
-        positions = tuple((5 * math.cos(math.radians(i)) + 5,
-                           5 * math.sin(math.radians(i)) + 5)
-                          for i in angles)
+        positions = tuple(
+            (5 * math.cos(math.radians(i)) + 5,
+             5 * math.sin(math.radians(i)) + 5)
+            for i in angles
+        )
 
         pygame.draw.polygon(image, "#0000ff", positions)
         return image

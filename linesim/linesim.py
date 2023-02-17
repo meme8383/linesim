@@ -102,10 +102,10 @@ class LineSimulation:
         # Quit game if robot leaves window
         elif check_bounds and (
                 (
-                        any(i - 30 < 0 for i in self.robot.position)
-                        or any(
-                    map(lambda x, y: x + 30 > y, self.robot.position,
-                        self.size))
+                    any(i - 30 < 0 for i in self.robot.position)
+                    or any(
+                           map(lambda x, y: x + 30 > y, self.robot.position,
+                               self.size))
                 )
         ):
             self.quit()

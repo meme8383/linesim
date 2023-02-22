@@ -29,7 +29,6 @@ class LineSimulation:
     ):
         """Initialize pygame and robot object"""
         self.running = True
-
         self.overlays = False
 
         starts = {"lines": (50, 450), "maze": (30, 280), "blank": (250, 250)}
@@ -49,11 +48,12 @@ class LineSimulation:
 
         # Initialize Window
         pygame.init()
-        pygame.display.set_caption("Line Following")
+        pygame.display.set_caption("LineSim")
         self.display = pygame.display.set_mode(self.size)
         self.clock = pygame.time.Clock()
 
         self.robot = Robot(start)
+        self.assets = []
 
     def add_sensor(self, offset, sensor, angle=None):
         """Add a sensor to the robot
@@ -76,6 +76,14 @@ class LineSimulation:
             raise ValueError(f"No such sensor type: {sensor}")
         self.robot.sensors.append(sensor)
         return sensor
+
+    def add_beacon(self, location, name):
+        """Add beacon to course"""
+        if name.lower() == "magnetic":
+            beacon = Magnet(self, self.robot, location)
+        else:
+            raise ValueError(f"No such beacon type: {name}")
+        self.assets.append(beacon)
 
     def update(self, check_bounds=True, fps=30):
         """Update simulation
@@ -102,10 +110,10 @@ class LineSimulation:
         # Quit game if robot leaves window
         elif check_bounds and (
                 (
-                    any(i - 30 < 0 for i in self.robot.position)
-                    or any(
-                           map(lambda x, y: x + 30 > y, self.robot.position,
-                               self.size))
+                 any(i - 30 < 0 for i in self.robot.position)
+                 or any(
+                        map(lambda x, y: x + 30 > y, self.robot.position,
+                            self.size))
                 )
         ):
             self.quit()
@@ -121,7 +129,7 @@ class LineSimulation:
         self.display.blit(self.background, (0, 0))
 
         # Render sensors
-        to_render = [self.robot] + self.robot.sensors
+        to_render = [self.robot] + self.robot.sensors + self.assets
         for item in to_render:
             surface = item.surface
             position = item.position
@@ -376,3 +384,39 @@ class Ultrasonic(Sensor):
 
         pygame.draw.polygon(image, "#0000ff", positions)
         return image
+
+
+class Beacon:
+    """Detectable beacon placed on track"""
+
+    def __init__(self, sim: LineSimulation, robot: Robot, position: tuple,
+                 radius: int = 20):
+        """Initialize position"""
+        self.position = position
+        self.robot = robot
+        self.sim = sim
+        self.radius = radius
+
+    @property
+    def surface(self) -> pygame.Surface:
+        """Get beacon surface"""
+        image = pygame.Surface((self.radius * 2,) * 2, pygame.SRCALPHA, 32)
+        image.convert_alpha()
+        pygame.draw.circle(image, "#ff0000", (self.radius,) * 2, self.radius,
+                           1)
+        pygame.draw.rect(image, "#000000",
+                         (self.radius - 2, self.radius - 2, 4, 4))
+        return image
+
+    def get_distance(self, coordinates: tuple) -> float:
+        """Return if location is within radius of beacon"""
+        distance = math.sqrt((coordinates[0] - self.position[0]) ^ 2 +
+                             (coordinates[1] - self.position[1]) ^ 2)
+
+        if distance <= self.radius:
+            return self.radius / distance
+        return 0
+
+
+class Magnet(Beacon):
+    """Hall detectable beacon"""

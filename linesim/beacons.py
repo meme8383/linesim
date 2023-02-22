@@ -7,12 +7,15 @@ import pygame
 class Beacon:
     """Detectable beacon placed on track"""
 
-    def __init__(self, sim, robot, position: tuple,
-                 radius: int = 20):
-        """Initialize position"""
+    def __init__(self, position: tuple, radius: int = 20):
+        """Initialize beacon
+
+        :param position: The beacon's position on the board.
+        :type position: tuple
+        :param radius: The effect radius of the beacon
+        :type radius: int, optional
+        """
         self.position = position
-        self.robot = robot
-        self.sim = sim
         self.radius = radius
 
     @property
@@ -27,13 +30,19 @@ class Beacon:
         return image
 
     def get_distance(self, coordinates: tuple) -> float:
-        """Return if location is within radius of beacon"""
-        distance = math.sqrt((coordinates[0] - self.position[0]) ^ 2 +
-                             (coordinates[1] - self.position[1]) ^ 2)
+        """Return power law representation of distance from sensor
+
+        :param coordinates: Coordinates of location to check
+        :type coordinates: tuple
+        :return: The radius of the sensor divided by the distance from it
+        :rtype: float
+        """
+        distance = math.sqrt((coordinates[0] - self.position[0]) ** 2 +
+                             (coordinates[1] - self.position[1]) ** 2)
 
         if distance <= self.radius:
             return self.radius / distance
-        return 0
+        return 0.0
 
 
 class Magnet(Beacon):

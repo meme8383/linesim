@@ -7,7 +7,8 @@ import math
 import os
 
 import pygame
-from . import Magnet, Line, Ultrasonic
+from .sensors import Line, Ultrasonic, Hall
+from .beacons import Magnet
 
 
 class LineSimulation:
@@ -72,6 +73,8 @@ class LineSimulation:
             if angle is None:
                 raise ValueError("Angle is a required parameter")
             sensor = Ultrasonic(self, self.robot, offset, angle)
+        elif sensor.lower() == "hall":
+            sensor = Hall(self, self.robot, offset)
         else:
             raise ValueError(f"No such sensor type: {sensor}")
         self.robot.sensors.append(sensor)
@@ -80,7 +83,7 @@ class LineSimulation:
     def add_beacon(self, location, name):
         """Add beacon to course"""
         if name.lower() == "magnetic":
-            beacon = Magnet(self, self.robot, location)
+            beacon = Magnet(location)
         else:
             raise ValueError(f"No such beacon type: {name}")
         self.assets.append(beacon)

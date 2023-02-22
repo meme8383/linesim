@@ -4,6 +4,8 @@ import math
 from functools import total_ordering
 import pygame
 
+from .beacons import Magnet
+
 
 class Sensor:
     """Base sensor class
@@ -186,3 +188,18 @@ class Ultrasonic(Sensor):
 
         pygame.draw.polygon(image, "#0000ff", positions)
         return image
+
+
+class Hall(Sensor):
+    """Hall effect sensor class"""
+
+    def get_reading(self):
+        """Get distance from all magnetic beacons"""
+        value = 0
+        for item in self.sim.assets:
+            if isinstance(item, Magnet):
+                value += item.get_distance(self.position)
+        return value
+
+    def __float__(self):
+        return self.get_reading()

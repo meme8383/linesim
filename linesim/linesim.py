@@ -11,7 +11,7 @@ from .sensors import Line, Ultrasonic, Hall
 from .beacons import Magnet
 
 
-class LineSimulation:
+class LineSimulation:  # pylint: disable=too-many-instance-attributes
     """Simulate a robot track with a robot and line sensors
 
     :param start: The start position of the robot,

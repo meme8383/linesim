@@ -4,7 +4,7 @@ import math
 from functools import total_ordering
 import pygame
 
-from .beacons import Magnet
+from .beacons import Magnet, Infrared
 
 
 class Sensor:
@@ -158,14 +158,10 @@ class Ultrasonic(Sensor):
         return self.get_distance()
 
     def __eq__(self, other):
-        if isinstance(other, Ultrasonic):
-            return self.get_distance() == other.get_distance()
-        return self.get_distance() == other
+        return int(self) == other
 
     def __lt__(self, other):
-        if isinstance(other, Ultrasonic):
-            return self.get_distance() < other.get_distance()
-        return self.get_distance() < other
+        return int(self) < other
 
     @property
     def surface(self) -> pygame.Surface:
@@ -190,6 +186,7 @@ class Ultrasonic(Sensor):
         return image
 
 
+@total_ordering
 class Hall(Sensor):
     """Hall effect sensor class"""
 
@@ -203,3 +200,31 @@ class Hall(Sensor):
 
     def __float__(self):
         return self.get_reading()
+
+    def __eq__(self, other):
+        return float(self) == other
+
+    def __lt__(self, other):
+        return float(self) < other
+
+
+@total_ordering
+class IR(Sensor):
+    """IR sensor class"""
+
+    def get_reading(self):
+        """Get distance from all IR beacons"""
+        value = 0
+        for item in self.sim.assets:
+            if isinstance(item, Infrared):
+                value += item.get_distance(self.position)
+        return value
+
+    def __float__(self):
+        return self.get_reading()
+
+    def __eq__(self, other):
+        return float(self) == other
+
+    def __lt__(self, other):
+        return float(self) < other

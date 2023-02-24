@@ -7,7 +7,8 @@ import pygame
 class Beacon:
     """Detectable beacon placed on track"""
 
-    def __init__(self, position: tuple, radius: int = 20):
+    def __init__(self, position: tuple, radius: int = 20,
+                 color: str = "#ff0000"):
         """Initialize beacon
 
         :param position: The beacon's position on the board.
@@ -17,13 +18,14 @@ class Beacon:
         """
         self.position = position
         self.radius = radius
+        self.color = color
 
     @property
     def surface(self) -> pygame.Surface:
         """Get beacon surface"""
         image = pygame.Surface((self.radius * 2,) * 2, pygame.SRCALPHA, 32)
         image.convert_alpha()
-        pygame.draw.circle(image, "#ff0000", (self.radius,) * 2, self.radius,
+        pygame.draw.circle(image, self.color, (self.radius,) * 2, self.radius,
                            1)
         pygame.draw.rect(image, "#000000",
                          (self.radius - 2, self.radius - 2, 4, 4))
@@ -47,3 +49,11 @@ class Beacon:
 
 class Magnet(Beacon):
     """Hall detectable beacon"""
+    def __init__(self, position: tuple):
+        super().__init__(position, 20, "#00ff00")
+
+
+class Infrared(Beacon):
+    """IR detectable beacon"""
+    def __init__(self, position: tuple):
+        super().__init__(position, 80, "#ff0000")

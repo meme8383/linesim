@@ -7,8 +7,8 @@ import math
 import os
 
 import pygame
-from .sensors import Line, Ultrasonic, Hall
-from .beacons import Magnet
+from .sensors import Line, Ultrasonic, Hall, IR
+from .beacons import Magnet, Infrared
 
 
 class LineSimulation:  # pylint: disable=too-many-instance-attributes
@@ -75,6 +75,8 @@ class LineSimulation:  # pylint: disable=too-many-instance-attributes
             sensor = Ultrasonic(self, self.robot, offset, angle)
         elif sensor.lower() == "hall":
             sensor = Hall(self, self.robot, offset)
+        elif sensor.lower() in ["ir", "infrared"]:
+            sensor = IR(self, self.robot, offset)
         else:
             raise ValueError(f"No such sensor type: {sensor}")
         self.robot.sensors.append(sensor)
@@ -84,6 +86,8 @@ class LineSimulation:  # pylint: disable=too-many-instance-attributes
         """Add beacon to course"""
         if name.lower() == "magnetic":
             beacon = Magnet(location)
+        elif name.lower() == "infrared":
+            beacon = Infrared(location)
         else:
             raise ValueError(f"No such beacon type: {name}")
         self.assets.append(beacon)
